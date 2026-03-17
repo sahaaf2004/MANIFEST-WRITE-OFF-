@@ -1,11 +1,28 @@
+using MyApp.Services;
+using System.Text.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "3000";
-var url = $"http://0.0.0.0:{port}";
-var target = Environment.GetEnvironmentVariable("TARGET") ?? "World";
+// Add services to the container.
+builder.Services.AddScoped<IMockValidationService, MockValidationService>();
+builder.Services.AddScoped<IMockAmendmentService, MockAmendmentService>();
+builder.Services.AddSingleton<IMockPaymentService, MockPaymentService>();
+builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
 var app = builder.Build();
 
-app.MapGet("/", () => $"Hello {target}!");
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
 
-app.Run(url);
+app.UseStaticFiles();
+
+// API routes
+app.MapControllers(); // This replaces the app.MapGet("/api/hello", ...)
+
+app.MapFallbackToFile("/index.html");
+
+app.Run();
