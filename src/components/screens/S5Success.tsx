@@ -73,9 +73,6 @@ export const S5Success: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-4 w-full max-w-sm">
-            <button className="btn-primary w-full">
-              Download Write-Off Certificate
-            </button>
             <button 
               onClick={() => updateState({ status: 'idle', rNumber: '', port: '', vesselName: '', deferredPaymentAccount: '' })}
               className="btn-ghost w-full"

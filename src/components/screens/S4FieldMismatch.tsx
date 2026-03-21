@@ -76,13 +76,7 @@ export const S4FieldMismatch: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <button 
-              onClick={() => updateState({ status: 'idle' })}
-              className="btn-ghost"
-            >
-              Back to Search
-            </button>
+          <div className="flex flex-col sm:flex-row items-center justify-end gap-4">
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               <button 
                 onClick={() => updateState({ status: 'pending_review' })}
