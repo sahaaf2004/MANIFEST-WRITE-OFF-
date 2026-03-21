@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, monospace;
+  
+  --color-gray-50: #F0F4F8;
+  --color-gray-100: #E2E8F0;
+  --color-gray-200: #CBD5E1;
+  --color-gray-300: #94A3B8;
+  --color-gray-400: #627D98;
+  --color-gray-500: #627D98;
+  --color-gray-600: #627D98;
+  --color-gray-700: #1A364E;
+  --color-gray-800: #1A364E;
+  --color-gray-900: #1A364E;
+}
+
+:root {
+  --bg-main: #F0F4F8;
+  --surface: #FFFFFF;
+  --primary: #3E7CB1;
+  --primary-hover: #2F618C;
+  --secondary: #254E70;
+  --text-primary: #1A364E;
+  --text-muted: #627D98;
+  
+  --danger: #C0392B;
+  --danger-bg: #FEF2F2;
+  --warning: #1A364E;
+  --warning-bg: #F0F4F8;
+  --success: #27AE60;
+  --success-bg: #F0FFF4;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+}
+
+.card-primary-stripe {
+  border-top: 4px solid var(--primary);
+}
+
+.btn-primary {
+  @apply bg-[var(--primary)] text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 hover:bg-[var(--primary-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-ghost {
+  @apply bg-transparent text-gray-600 font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+}

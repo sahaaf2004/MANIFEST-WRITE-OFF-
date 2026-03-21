@@ -1,0 +1,106 @@
+import React, { useEffect } from 'react';
+import { useAppContext, FieldResult } from '../../context/AppContext';
+import { CheckCircle, XCircle } from 'lucide-react';
+
+const mockFields: FieldResult[] = [
+  { field: 'Gross Weight', manifestValue: '1200 kg', evaluatorValue: '1200 kg', match: true, fineTier: 1000 },
+  { field: 'Package Code', manifestValue: 'CTN', evaluatorValue: 'CTN', match: true, fineTier: 1000 },
+  { field: 'Packs Number', manifestValue: '50', evaluatorValue: '50', match: true, fineTier: 1000 },
+  { field: 'Exporter', manifestValue: 'Global Exports Ltd', evaluatorValue: 'Global Exports LLC', match: false, fineTier: 500 },
+  { field: 'Consignee', manifestValue: 'Maldives Imports', evaluatorValue: 'Maldives Imports', match: true, fineTier: 1000 },
+  { field: 'Carrier', manifestValue: 'Oceanic Lines', evaluatorValue: 'Oceanic Lines', match: true, fineTier: 500 },
+  { field: 'BL Number', manifestValue: 'BL-998877', evaluatorValue: 'BL-998877-A', match: false, fineTier: 1000 },
+];
+
+export const S4FieldMismatch: React.FC = () => {
+  const { state, updateState } = useAppContext();
+
+  const fields = state.fieldResults.length > 0 ? state.fieldResults : mockFields;
+  const failedFields = fields.filter(f => !f.match);
+  const calculatedFine = failedFields.reduce((max, f) => Math.max(max, f.fineTier), 0);
+
+  useEffect(() => {
+    if (state.fieldResults.length === 0) {
+      updateState({ fieldResults: fields, failedFields, calculatedFine });
+    }
+  }, []);
+
+  return (
+    <div className="max-w-4xl mx-auto px-4">
+      <div className="bg-white rounded-xl shadow-sm border border-[var(--warning)] overflow-hidden">
+        <div className="bg-[var(--warning)] text-white p-4 font-bold text-lg text-center">
+          Write-Off Unsuccessful — Data Mismatch Detected
+        </div>
+        <div className="p-6 sm:p-8">
+          <p className="text-gray-600 mb-8 text-center max-w-2xl mx-auto">
+            <span className="font-bold text-gray-900">{failedFields.length} field(s)</span> do not match the E-Valuator record. Review the comparison below.
+          </p>
+
+          <div className="overflow-x-auto mb-8 rounded-lg border border-gray-200">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50 text-gray-700 text-sm border-b border-gray-200">
+                  <th className="p-4 font-medium">Field Name</th>
+                  <th className="p-4 font-medium">Your Manifest Value</th>
+                  <th className="p-4 font-medium">E-Valuator Value</th>
+                  <th className="p-4 font-medium text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                {fields.map((f, i) => (
+                  <tr key={i} className={`border-b border-gray-100 last:border-0 ${f.match ? 'bg-white border-l-4 border-l-[var(--success)]' : 'bg-[var(--danger-bg)] border-l-4 border-l-[var(--danger)]'}`}>
+                    <td className="p-4 font-medium text-gray-900">{f.field}</td>
+                    <td className={`p-4 ${!f.match ? 'text-[var(--danger)] font-medium' : 'text-gray-600'}`}>{f.manifestValue}</td>
+                    <td className={`p-4 ${!f.match ? 'text-[var(--danger)] font-medium' : 'text-gray-600'}`}>{f.evaluatorValue}</td>
+                    <td className="p-4 text-center">
+                      {f.match ? (
+                        <CheckCircle className="w-5 h-5 text-[var(--success)] mx-auto" />
+                      ) : (
+                        <XCircle className="w-5 h-5 text-[var(--danger)] mx-auto" />
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="bg-[var(--warning-bg)] border border-blue-200 rounded-lg p-6 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-gray-900 mb-1">{failedFields.length} field(s) require correction</h3>
+              <p className="text-sm text-gray-600">before this manifest can be written off.</p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-gray-600 mb-1">Fine applicable:</p>
+              <p className="text-xl font-bold text-[var(--danger)]">MVR {calculatedFine.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <button 
+              onClick={() => updateState({ status: 'idle' })}
+              className="btn-ghost"
+            >
+              Back to Search
+            </button>
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <button 
+                onClick={() => updateState({ status: 'pending_review' })}
+                className="text-[var(--primary)] hover:underline text-sm font-medium px-4 py-2 text-center border border-[var(--primary)] rounded-lg"
+                style={{ fontFamily: 'Arial', borderWidth: '1px' }}
+              >
+                Apply for Manual Write OFF
+              </button>
+              <button 
+                onClick={() => updateState({ status: 'amendment_form' })}
+                className="btn-primary"
+              >
+                Apply for Amendment
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
